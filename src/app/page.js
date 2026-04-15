@@ -1,16 +1,21 @@
 "use client";
 
 import React, { useState } from "react";
-import Fetchbutton from "../components/Fetchbutton";
 import { fetchCompanyData } from "../utils/api";
+import RevenueChart from "../components/RevenueChart";
+import { useContext } from "react";
+import { AppContext } from "../context/AppContext";
 
 export default function Main() {
-  const [data, setData] = useState(null);
+  const [input, setInput] = useState("");
+  const { data, setData, companyName, setCompanyName } = useContext(AppContext);
 
   const handlefetch = async () => {
     try {
-      const res = await fetchCompanyData("0000320193");
-      console.log(res);
+      const res = await fetchCompanyData(input);
+
+      const name = res?.entityName || "Unknown Company";
+      setCompanyName(name);
 
       // Extraction of Revenue data
       const usGaap = res?.facts?.["us-gaap"];
@@ -25,26 +30,59 @@ export default function Main() {
       const sortedRevenue = [...yearlyRevenue]?.sort(
         (a, b) => new Date(b.end) - new Date(a.end),
       );
+      console.log(sortedRevenue);
 
-      // For latest 5 Years revenue Data
-      const latestRevenue = sortedRevenue?.slice(0, 5);
+      // For latest 5 Years revenue Data with no duplicates
+      const seenYears = new Set();
+      const uniqueRevenue = [];
+
+      for (const item of sortedRevenue) {
+        const year = new Date(item.end).getFullYear();
+        if (!seenYears.has(year)) {
+          seenYears.add(year);
+          uniqueRevenue.push(item);
+        }
+        if (uniqueRevenue.length === 5) break;
+      }
+
+      const orderedRevenue = [...uniqueRevenue].reverse();
 
       // Mapping the data to get year and revenue
-      const finalRevenue = latestRevenue?.map((item) => ({
+      const finalRevenue = orderedRevenue.map((item) => ({
         year: new Date(item.end).getFullYear(),
         revenue: item.val,
       }));
 
       setData(finalRevenue);
-      console.log(finalRevenue);
     } catch (error) {
       console.error(error);
     }
   };
+
+  // To handle form submission and prevent default behavior
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    handlefetch();
+  };
+
   return (
     <div>
-      <Fetchbutton onFetch={handlefetch} />
-      {data && <pre>{JSON.stringify(data, null, 2)}</pre>}
+      <form onSubmit={handleSubmit} className="flex gap-2 mb-4">
+        <input
+          type="text"
+          placeholder="Enter CIK"
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+        />
+        <button type="submit">Fetch Data</button>
+      </form>
+
+      {companyName && (
+        <h2 className="text-lg font-semibold mb-2">
+          {companyName} (CIK: {input})
+        </h2>
+      )}
+      {data && <RevenueChart />}
     </div>
   );
 }
