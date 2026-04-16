@@ -90,7 +90,7 @@ export default function Main() {
        
       }
 
-      const orderedRevenue = [...uniqueRevenue].reverse();
+      const orderedRevenue = [...uniqueRevenue];
 
       // Mapping the data to get year and revenue
       const finalRevenue = orderedRevenue.map((item) => ({
@@ -156,7 +156,7 @@ export default function Main() {
       )}
 
       {data && (
-        <div className="w-full h-72 sm:h-80 md:h-106">
+        <div className="w-full h-[400px] md:h-[500px] lg:h-[550px] ">
           <h2 className="text-md font-medium text-slate-300 m-3 ">
             Revenue Trend Over the Years
           </h2>
