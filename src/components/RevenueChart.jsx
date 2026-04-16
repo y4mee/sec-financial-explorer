@@ -15,6 +15,7 @@ import { AppContext } from "../context/AppContext";
 
 const RevenueChart = () => {
   const { data } = useContext(AppContext);
+  const chartData = [...data].reverse();
 
   const formatRevenue = (value) => {
     return `$${(value / 1e9).toFixed(0)}B`;
@@ -24,7 +25,7 @@ const RevenueChart = () => {
     <div className="w-full h-75 md:h-100 lg:h-112.5 p-4 bg-gray-900 rounded-xl shadow">
       <ResponsiveContainer width="100%" height="100%">
         <LineChart
-          data={data}
+          data={chartData}
           margin={{ top: 20, right: 20, left: 10, bottom: 10 }}
         >
           <CartesianGrid
