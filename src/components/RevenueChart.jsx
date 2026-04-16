@@ -21,43 +21,49 @@ const RevenueChart = () => {
   };
 
   return (
-    <div className="w-full h-[300px] md:h-[400px] lg:h-[450px] p-4 bg-gray-900 rounded-xl shadow">
+    <div className="w-full h-75 md:h-100 lg:h-112.5 p-4 bg-gray-900 rounded-xl shadow">
       <ResponsiveContainer width="100%" height="100%">
         <LineChart
           data={data}
           margin={{ top: 20, right: 20, left: 10, bottom: 10 }}
         >
-          <CartesianGrid stroke="#444" strokeDasharray="3 3" />
+          <CartesianGrid
+            stroke="rgba(255,255,255,0.05)"
+            strokeDasharray="4 4"
+            vertical={false}
+          />
 
           <XAxis
             dataKey="year"
-            stroke="#ccc"
-            tick={{ fill: "#ccc", fontSize: 12 }}
+            stroke="transparent"
+            tick={{ fill: "#6b7280", fontSize: 12 }}
           />
 
           <YAxis
-            stroke="#ccc"
-            tick={{ fill: "#ccc", fontSize: 12 }}
+            stroke="transparent"
+            tick={{ fill: "#6b7280", fontSize: 12 }}
             tickFormatter={formatRevenue}
+            width={52}
           />
 
           <Tooltip
             formatter={(value) => formatRevenue(value)}
             contentStyle={{
-              backgroundColor: "#111",
-              border: "none",
+              backgroundColor: "#1f2937",
+              border: "1px solid rgba(255,255,255,0.08)",
               borderRadius: "8px",
-              color: "#fff",
+              color: "#f9fafb",
+              fontSize: "13px",
             }}
           />
 
           <Line
             type="monotone"
             dataKey="revenue"
-            stroke="#4f46e5"
-            strokeWidth={3}
-            dot={{ r: 4 }}
-            activeDot={{ r: 6 }}
+            stroke="#3b82f6"
+            strokeWidth={2}
+            dot={{ r: 3, fill: "#3b82f6" }}
+            activeDot={{ r: 5 }}
           />
         </LineChart>
       </ResponsiveContainer>
