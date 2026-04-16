@@ -8,6 +8,7 @@ import { useContext } from "react";
 import { AppContext } from "../context/AppContext";
 
 export default function Main() {
+  
   const [input, setInput] = useState("");
 
   const {
@@ -24,6 +25,9 @@ export default function Main() {
 
   // TO handle the fetching data from API
   const handlefetch = async () => {
+    // to prevent multiple calls 
+    if (loading) return;
+
     const trimmedInput = input.trim();
 
     // Validation for the Input CIK
@@ -41,7 +45,7 @@ export default function Main() {
     setData(null);
     setCompanyName("");
 
-    
+     
     try {
       const res = await fetchCompanyData(trimmedInput);
 
@@ -71,7 +75,7 @@ export default function Main() {
       const sortedRevenue = [...yearlyRevenue].sort(
         (a, b) => new Date(b.end) - new Date(a.end),
       );
-      console.log(sortedRevenue);
+     
 
       // For latest 5 Years revenue Data with no duplicates
       const seenYears = new Set();
@@ -96,7 +100,7 @@ export default function Main() {
 
       setData(finalRevenue);
     } catch (err) {
-      console.error(err);
+      
       setError("Invalid CIK or failed to fetch data");
       setData(null);
     } finally {
@@ -113,7 +117,7 @@ export default function Main() {
   return (
     <div className="min-h-screen w-full bg-zinc-900  text-white p-4 md:p-6 lg:p-10">
       <h1 className="text-xl md:text-3xl lg: text-3xl font-semibold my-6 text-center md:text-left text-slate-200">
-        SEC Financial Data Fetcher
+        SEC Financial Data Explorer
       </h1>
       <form onSubmit={handleSubmit} className="flex gap-2 mb-4 outline-none">
         <input
